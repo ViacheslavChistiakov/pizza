@@ -11,7 +11,7 @@ import { decrement, increment, test } from './redux/slices/filterSlice';
 
 
 
- export const AppContext = React.createContext("");
+//  export const AppContext = React.createContext("");
 
 
 
@@ -21,14 +21,13 @@ import { decrement, increment, test } from './redux/slices/filterSlice';
 
 
 function App() {
-  const [searchValue, setSearchValue] = React.useState("");
+  // const [searchValue, setSearchValue] = React.useState("");
 
 
 
 
   return (
     <div className="wrapper">
-      <AppContext.Provider value={{ searchValue, setSearchValue }}>
       <Header/> 
         <div className="content">
             <Routes>
@@ -37,7 +36,6 @@ function App() {
               <Route path="*" element={<NotFound />} />
           </Routes>
    </div>
-      </AppContext.Provider>
   </div>
   );
 }

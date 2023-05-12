@@ -2,7 +2,7 @@ import React from "react";
 import qs from 'qs';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from "axios";
-import { setCategoryId, setCurrentPage, setFilters } from "../redux/slices/filterSlice";
+import { selectFilter, setCategoryId, setCurrentPage, setFilters, setSearchValue } from "../redux/slices/filterSlice";
 import { useNavigate } from 'react-router-dom';
 import Categories from "../components/Categories";
 import Sort from "../components/Sort";
@@ -11,7 +11,7 @@ import Skeleton from "../components/PizzaBlock/Skeleton";
 import Pagination from "../components/Pagination";
 import { AppContext } from "../App";
 import { list } from "../components/Sort";
-import {  fetchPizzas } from "../redux/slices/pizzaSlice";
+import {  fetchPizzas, selectPizzaData } from "../redux/slices/pizzaSlice";
 import { Link } from "react-router-dom";
 // import { useNavigate } from "react-router";
 
@@ -22,19 +22,17 @@ export const Home = () => {
   const isSearch = React.useRef(false);
   const isMounted = React.useRef(false);
 
-  // const { categoryId, sort, currentPage } = useSelector(selectFilter);
-  // const { categoryId, sort, currentPage } = useSelector(selectFilter);
-  const {items, status} =  useSelector((state) => state.pizza);
 
-
-  const categoryId = useSelector((state) => state.filter.categoryId);
+  const {items, status} =  useSelector(selectPizzaData);
+  const { categoryId, searchValue }  = useSelector(selectFilter);
   const sortType = useSelector((state) => state.filter.sort.sortProperty);
   const currentPage =  useSelector((state) => state.filter.currentPage);
+  // const searchValue  = useSelector(selectFilter);
 
 
 
  
-    const { searchValue } = React.useContext(AppContext)
+    // const { searchValue } = React.useContext(AppContext)
 
 
     const onChooseCategory = (index) => {
@@ -80,13 +78,16 @@ React.useEffect(() => {
 
     dispath(
       setFilters({
-        ...params,
-        sort,
+       ...params,
+       sort,
       })
     );
     isSearch.current = true;
   }
 }, [])
+
+
+
 
 React.useEffect(() => {
     getPizzas();
@@ -113,7 +114,7 @@ React.useEffect(() => {
 // ));
 
 const somefood = items.filter((obj) => {
-  if (obj.title.toLowerCase().includes(searchValue.toLowerCase())) {
+  if (obj.title.toLowerCase().includes(searchValue.toLowerCase())) { 
     return true;
   }
 
