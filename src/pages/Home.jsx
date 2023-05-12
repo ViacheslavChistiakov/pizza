@@ -11,6 +11,8 @@ import Skeleton from "../components/PizzaBlock/Skeleton";
 import Pagination from "../components/Pagination";
 import { AppContext } from "../App";
 import { list } from "../components/Sort";
+import {  fetchPizzas } from "../redux/slices/pizzaSlice";
+import { Link } from "react-router-dom";
 // import { useNavigate } from "react-router";
 
 
@@ -21,6 +23,8 @@ export const Home = () => {
   const isMounted = React.useRef(false);
 
   // const { categoryId, sort, currentPage } = useSelector(selectFilter);
+  // const { categoryId, sort, currentPage } = useSelector(selectFilter);
+  const {items, status} =  useSelector((state) => state.pizza);
 
 
   const categoryId = useSelector((state) => state.filter.categoryId);
@@ -28,11 +32,10 @@ export const Home = () => {
   const currentPage =  useSelector((state) => state.filter.currentPage);
 
 
+
  
     const { searchValue } = React.useContext(AppContext)
-    const [pizzas, setPizzas] = React.useState([]);
-    const [isLoading, setIsLoading] = React.useState(true);
-  
+
 
     const onChooseCategory = (index) => {
       dispath(setCategoryId(index));
@@ -43,18 +46,28 @@ export const Home = () => {
       dispath(setCurrentPage(number))
     }
 
-   const fetchPizzas = () => {
-    setIsLoading(true);
+   const getPizzas = async () => {
     const sortBy = sortType.replace("-", "");
     const order = sortType.includes("-") ? "asc" : "desc";
     const category = categoryId > 0 ? `category=${categoryId}` : "";
     const search = searchValue > 0 ? `search=${searchValue}` : "";
     
-    axios.get(`http://localhost:3002/pizzas?_limit=4&_page=${currentPage}${category}&_sort=${sortType}&_order=${order}&{search}`)
-    .then((res) => {
-    setPizzas(res.data);
-    setIsLoading(false);
-  })
+
+
+      dispath(
+        fetchPizzas({
+        sortBy,
+        order,
+        category,
+        search,
+        currentPage,
+        sortType,
+      })
+      
+    )
+    
+
+  window.scrollTo(0, 0);
 }
 
   
@@ -76,12 +89,7 @@ React.useEffect(() => {
 }, [])
 
 React.useEffect(() => {
-  window.scrollTo(0, 0);
-   if ( !isSearch.current ) {
-    fetchPizzas();
-   }
-
-   isSearch.current = false;
+    getPizzas();
 }, [categoryId, sortType, searchValue, currentPage]);
 
 React.useEffect(() => {
@@ -98,13 +106,20 @@ React.useEffect(() => {
 }, [categoryId, sortType, searchValue, currentPage])
 
 
-const somefood = pizzas.filter((obj) => {
+// const somefood = items.map((obj) => (
+//   <Link key={obj.id} to={`/pizza/${obj.id}`}>
+//     <PizzaBlock {...obj} />
+//   </Link>
+// ));
+
+const somefood = items.filter((obj) => {
   if (obj.title.toLowerCase().includes(searchValue.toLowerCase())) {
     return true;
   }
 
   return false;
-}).map((obj) => <PizzaBlock key={obj.id} {...obj}/>);
+}).map((obj) => <PizzaBlock key={obj.id} {...obj}/>)
+
 const skeletons = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
     return (
         <>
@@ -114,8 +129,19 @@ const skeletons = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
         <Sort />  
         </div>
         <h2 className="content__title">Все пиццы</h2>
-        <div className="content__items">
-       {isLoading ? skeletons: somefood}</div>
+        {status === 'error' ? (
+            <div className="content__error-info">
+           <h2> Произошла ошибка 😕</h2>
+        <p>
+         К сожалению нам не удалось получить питсы. Попробуйте повторить попытку позже.
+        </p>
+          </div> 
+          ) : (
+            <div className="content__items">
+            {status === 'loading' ? skeletons: somefood}</div>
+          )
+        }
+
        <Pagination currentPage={currentPage} onChangePage={onChangePage} />
       </div>
         </>
