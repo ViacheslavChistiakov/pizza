@@ -9,11 +9,10 @@ import Sort from "../components/Sort";
 import PizzaBlock from "../components/PizzaBlock";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import Pagination from "../components/Pagination";
-import { AppContext } from "../App";
 import { list } from "../components/Sort";
 import {  fetchPizzas, selectPizzaData } from "../redux/slices/pizzaSlice";
 import { Link } from "react-router-dom";
-// import { useNavigate } from "react-router";
+
 
 
 export const Home = () => {
@@ -27,18 +26,10 @@ export const Home = () => {
   const { categoryId, searchValue }  = useSelector(selectFilter);
   const sortType = useSelector((state) => state.filter.sort.sortProperty);
   const currentPage =  useSelector((state) => state.filter.currentPage);
-  // const searchValue  = useSelector(selectFilter);
-
-
-
- 
-    // const { searchValue } = React.useContext(AppContext)
-
 
     const onChooseCategory = (index) => {
       dispath(setCategoryId(index));
     };
-
 
     const onChangePage = number => {
       dispath(setCurrentPage(number))
@@ -107,19 +98,13 @@ React.useEffect(() => {
 }, [categoryId, sortType, searchValue, currentPage])
 
 
-// const somefood = items.map((obj) => (
-//   <Link key={obj.id} to={`/pizza/${obj.id}`}>
-//     <PizzaBlock {...obj} />
-//   </Link>
-// ));
-
 const somefood = items.filter((obj) => {
   if (obj.title.toLowerCase().includes(searchValue.toLowerCase())) { 
     return true;
   }
 
   return false;
-}).map((obj) => <PizzaBlock key={obj.id} {...obj}/>)
+}).map((obj) => <Link key={obj.id} to={`/pizza/${obj.id}`}><PizzaBlock  {...obj} /></Link>)
 
 const skeletons = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
     return (
@@ -150,5 +135,4 @@ const skeletons = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
     )
     
 }
-
 export default Home;
