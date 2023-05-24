@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 
 
 
-export const Home = () => {
+export const Home: React.FC = () => {
   const navigate = useNavigate();
   const dispath = useDispatch();
   const isSearch = React.useRef(false);
@@ -24,15 +24,15 @@ export const Home = () => {
 
   const {items, status} =  useSelector(selectPizzaData);
   const { categoryId, searchValue }  = useSelector(selectFilter);
-  const sortType = useSelector((state) => state.filter.sort.sortProperty);
-  const currentPage =  useSelector((state) => state.filter.currentPage);
+  const sortType = useSelector((state:any) => state.filter.sort.sortProperty);
+  const currentPage =  useSelector((state:any) => state.filter.currentPage);
 
-    const onChooseCategory = (index) => {
+    const onChooseCategory = (index: number) => {
       dispath(setCategoryId(index));
     };
 
-    const onChangePage = number => {
-      dispath(setCurrentPage(number))
+    const onChangePage = (page: number) => {
+      dispath(setCurrentPage(page))
     }
 
    const getPizzas = async () => {
@@ -44,6 +44,7 @@ export const Home = () => {
 
 
       dispath(
+        //@ts-ignore
         fetchPizzas({
         sortBy,
         order,
@@ -64,7 +65,7 @@ export const Home = () => {
 React.useEffect(() => {
   if (window.location.search) {
     const params = qs.parse(window.location.search.substring(1));
-
+     //@ts-ignore
     const sort = list.find((obj) => obj.sortType === params.sortType)
 
     dispath(
@@ -98,13 +99,13 @@ React.useEffect(() => {
 }, [categoryId, sortType, searchValue, currentPage])
 
 
-const somefood = items.filter((obj) => {
+const somefood = items.filter((obj: any) => {
   if (obj.title.toLowerCase().includes(searchValue.toLowerCase())) { 
     return true;
   }
 
   return false;
-}).map((obj) => <Link key={obj.id} to={`/pizza/${obj.id}`}><PizzaBlock  {...obj} /></Link>)
+}).map((obj: any) => <Link key={obj.id} to={`/pizza/${obj.id}`}><PizzaBlock  {...obj} /></Link>)
 
 const skeletons = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
     return (

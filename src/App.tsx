@@ -1,11 +1,11 @@
-import React, { Children } from "react"; 
+
 import "./scss/app.scss";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
-import { Outlet, Route, Routes } from "react-router";
+import { Route, Routes } from "react-router";
 import Cart from "./pages/Cart";
-import NotFoundBlock from "./components/NotFoundBlock";
-import { decrement, increment, test } from './redux/slices/filterSlice';
+
+
 import FullPizza from "./pages/FullPizza";
 import MainLayout from "./layouts/MainLayout";
 
