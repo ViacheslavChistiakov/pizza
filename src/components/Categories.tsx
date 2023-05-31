@@ -3,7 +3,7 @@ import React from "react";
 
 type CategoriesProps = {
   value: number;
-  onClickChoose: any;
+  onClickChoose: (index: number) => void;
   
 }  
 

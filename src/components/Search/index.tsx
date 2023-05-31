@@ -12,7 +12,7 @@ export const Search: React.FC = () => {
  const inputRef = React.useRef<HTMLInputElement>(null);
 
 
- function onClickClear() {
+const onClickClear = () => {
         dispatch(setSearchValue(''));
         setValue('');
         inputRef.current?.focus();

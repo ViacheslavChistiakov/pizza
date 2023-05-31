@@ -1,24 +1,28 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setSort } from "../redux/slices/filterSlice";
+import { Sort, setSort } from "../redux/slices/filterSlice";
 import { current } from "@reduxjs/toolkit";
-import { selectSort } from "../redux/slices/filterSlice";
+import { selectSort, SortPropertyEnum } from "../redux/slices/filterSlice";
 
 type SortItem = {
   name: string;
-  sortProperty: string;
+  sortProperty: SortPropertyEnum;
 }
 
+type PopUpClick = MouseEvent & {
+  path: Node[];
+};
+
 export const list: SortItem[] = [
-  {name: "популярности (DESC)", sortProperty: "rating"},
-  {name: "популярности (ASC)", sortProperty: "-rating"},
-  {name: "цене (DESC)", sortProperty: "price"},
-  {name: "цене (ASC)", sortProperty: "-price"},
-  {name: "алфавиту (DESC)", sortProperty: "title"},
-  {name: "алфавиту (ASC)", sortProperty: "-title"},
+  {name: "популярности (DESC)", sortProperty: SortPropertyEnum.RATING_DESC},
+  {name: "популярности (ASC)", sortProperty: SortPropertyEnum.RATING_ASC},
+  {name: "цене (DESC)", sortProperty: SortPropertyEnum.PRICE_DESC},
+  {name: "цене (ASC)", sortProperty: SortPropertyEnum.PRICE_ASC},
+  {name: "алфавиту (DESC)", sortProperty: SortPropertyEnum.TITLE_DESC},
+  {name: "алфавиту (ASC)", sortProperty: SortPropertyEnum.TITLE_ASC},
 ];
 
-function Sort(){
+function SortPopup(){
   const dispatch = useDispatch();
   const sort = useSelector(selectSort)
   const sortRef = React.useRef<HTMLDivElement>(null)
@@ -32,10 +36,12 @@ function Sort(){
   }
 
   React.useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (!event.composedPath().includes(sortRef.current)) {
-       setOpen(false);
+    const handleClickOutside = (event: MouseEvent) => {
+      const _event = event as PopUpClick; 
+      if (sortRef.current && !_event.composedPath().includes(sortRef.current)) {
+        setOpen(false);
       }
+ 
     }
 
     document.body.addEventListener('click', handleClickOutside)
@@ -77,4 +83,4 @@ function Sort(){
     )
   }
 
-  export default Sort;
+  export default SortPopup;
