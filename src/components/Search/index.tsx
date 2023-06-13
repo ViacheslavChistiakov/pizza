@@ -1,29 +1,31 @@
 import React from "react";
+ //@ts-ignore
 import debounce from "lodash.debounce"
 import styles from "./Search.module.scss"
-import { AppContext } from "../../App";
+import { setSearchValue } from "../../redux/slices/filterSlice";
+import { useDispatch } from "react-redux";
 
 
-export const Search = () => {
- const [value, setValue] = React.useState();
- const { searchValue, setSearchValue } = React.useContext(AppContext)
- const inputRef = React.useRef();
+export const Search: React.FC = () => {
+ const dispatch = useDispatch();   
+ const [value, setValue] = React.useState<string>();
+ const inputRef = React.useRef<HTMLInputElement>(null);
 
 
- function onClickClear() {
-        setSearchValue('');
+const onClickClear = () => {
+        dispatch(setSearchValue(''));
         setValue('');
-        inputRef.current.focus();
+        inputRef.current?.focus();
     };
 
  const updateSearchValue = React.useCallback(
-    debounce((str) => {
-       setSearchValue(str);
+    debounce((str: string) => {
+        dispatch(setSearchValue(str));
     }, 2000),
     [],
 );
 
-    const onChangeInput = event => {
+    const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(event.target.value);
         updateSearchValue(event.target.value);
     };
@@ -40,7 +42,7 @@ export const Search = () => {
     ref={inputRef}
     value={value}
     onChange={onChangeInput} className={styles.input} placeholder="Поиск пиццы..." />
-    {searchValue && (
+    {value && (
         <svg onClick={onClickClear} className={styles.clearIcon} data-name="Livello 1" id="Livello_1" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg"><title/><path d="M64,0a64,64,0,1,0,64,64A64.07,64.07,0,0,0,64,0Zm0,122a58,58,0,1,1,58-58A58.07,58.07,0,0,1,64,122Z"/><path d="M92.12,35.79a3,3,0,0,0-4.24,0L64,59.75l-23.87-24A3,3,0,0,0,35.88,40L59.76,64,35.88,88a3,3,0,0,0,4.25,4.24L64,68.25l23.88,24A3,3,0,0,0,92.13,88L68.24,64,92.13,40A3,3,0,0,0,92.12,35.79Z"/></svg>
     )}
     </div>

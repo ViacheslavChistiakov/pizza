@@ -1,8 +1,13 @@
 import React from "react";
 
-function Categories( {value, onClickChoose} ){
-    const [activeIndex, setActiveIndex] = React.useState(0);
 
+type CategoriesProps = {
+  value: number;
+  onClickChoose: (index: number) => void;
+  
+}  
+
+const Categories: React.FC<CategoriesProps> = ( {value, onClickChoose} ) => {
     const categories = [
         "Все",
         "Мясные",
@@ -11,12 +16,6 @@ function Categories( {value, onClickChoose} ){
         "Острые",
         "Закрытые",
     ]
-
-    // const onClickCategory = (index) => {
-    //     setActiveIndex(index); 
-    // }
-
-
 
     return(
       <div className="categories">
@@ -30,6 +29,10 @@ function Categories( {value, onClickChoose} ){
       </ul>
     </div>
     )
-  }
+  
+
+}
+
+
 
   export default Categories;
