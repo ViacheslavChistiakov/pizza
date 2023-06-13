@@ -1,13 +1,14 @@
 import React from "react";
 
 
+
 type CategoriesProps = {
   value: number;
   onClickChoose: (index: number) => void;
   
 }  
 
-const Categories: React.FC<CategoriesProps> = ( {value, onClickChoose} ) => {
+export const Categories: React.FC<CategoriesProps> = React.memo(({value, onClickChoose} ) => {
     const categories = [
         "Все",
         "Мясные",
@@ -31,8 +32,8 @@ const Categories: React.FC<CategoriesProps> = ( {value, onClickChoose} ) => {
     )
   
 
-}
+})
 
 
 
-  export default Categories;
+ 
