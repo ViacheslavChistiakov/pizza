@@ -21,4 +21,3 @@ export const CartEmpty: React.FC = () => {
 }
 
 
-export default CartEmpty;
