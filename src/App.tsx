@@ -13,8 +13,10 @@ const Cart = Loadable({
 })
 
 
-const FullPizza:React.FC = React.lazy(() => import(/* webpackChunkName:'FullPizza'  */'./pages/FullPizza').then(m => ({default:FullPizza})));
+const FullPizza:React.FC = React.lazy(() => import(/* webpackChunkName:'FullPizza'  */'./pages/FullPizza').then(module => ({ default: module.default })))
 const NotFound = React.lazy(() => import(/* webpackChunkName:'NotFound'  */'./pages/NotFound'));
+
+
 
 
 
