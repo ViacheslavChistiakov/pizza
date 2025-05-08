@@ -1,17 +1,13 @@
 import React from "react";
-import qs from 'qs';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../redux/store'
-import axios from "axios";
-import { selectFilter, setCategoryId, setCurrentPage, setFilters, FilterSliceState } from "../redux/slices/filterSlice";
+import { setCategoryId, setCurrentPage, setFilters } from "../redux/filter/slice";
 import { useNavigate } from 'react-router-dom';
-import Categories from "../components/Categories";
-import Sort from "../components/Sort";
-import PizzaBlock from "../components/PizzaBlock";
-import Skeleton from "../components/PizzaBlock/Skeleton";
-import Pagination from "../components/Pagination";
-import { list } from "../components/Sort";
-import {  SearchPizzaParams, fetchPizzas, selectPizzaData } from "../redux/slices/pizzaSlice";
+import { PizzaBlock, Skeleton, Categories, Sort, Pagination } from "../components";
+import { selectFilter } from "../redux/filter/selectors";
+import { selectPizzaData } from "../redux/pizza/selectors";
+import { fetchPizzas } from "../redux/pizza/asyncAction";
+
 
 
 
@@ -24,22 +20,26 @@ export const Home: React.FC = () => {
   const isMounted = React.useRef(false);
 
 
+  import("../utils/math").then(math => {
+    console.log(math.add(555, 345));
+  });
+
   const {items, status} =  useSelector(selectPizzaData);
-  const { categoryId, searchValue, sortProperty , currentPage}  = useSelector(selectFilter);
+  const { categoryId, searchValue, sort, currentPage}  = useSelector(selectFilter);
   // const sortType = useSelector((state:any) => state.filter.sort.sortProperty);
   // const currentPage =  useSelector((state:any) => state.filter.currentPage);
 
-    const onChooseCategory = (index: number) => {
+    const onChooseCategory = React.useCallback((index: number) => {
       dispath(setCategoryId(index));
-    };
+    }, [])
 
     const onChangePage = (page: number) => {
       dispath(setCurrentPage(page))
     }
 
    const getPizzas = async () => {
-    const sortBy = sortProperty.replace("-", "");
-    const order = sortProperty.includes("-") ? "asc" : "desc";
+    const sortBy = sort.sortProperty.replace("-", "");
+    const order = sort.sortProperty.includes("-") ? "asc" : "desc";
     const category = categoryId > 0 ? `category=${categoryId}` : "";
     const search = searchValue;
     
@@ -52,7 +52,6 @@ export const Home: React.FC = () => {
         category,
         search,
         currentPage:String(currentPage),
-        sortProperty,
       })
       
     )
@@ -82,7 +81,7 @@ export const Home: React.FC = () => {
 
 React.useEffect(() => {
     getPizzas();
-}, [categoryId, sortProperty, searchValue, currentPage]);
+}, [categoryId, sort.sortProperty, searchValue, currentPage]);
 
 
 // React.useEffect(() => {
@@ -111,15 +110,16 @@ const somefood = items.filter((obj: any) => {
   }
 
   return false;
-}).map((obj: any) => <PizzaBlock  {...obj} />)
+}).map((obj: any) => <PizzaBlock key={obj.id}  {...obj} />)
 
 const skeletons = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
+
     return (
         <>
         <div className="container">
           <div className="content__top">
         <Categories value={categoryId} onClickChoose={onChooseCategory} />
-        <Sort />  
+        <Sort value={sort} />  
         </div>
         <h2 className="content__title">Все пиццы</h2>
         {status === 'error' ? (
